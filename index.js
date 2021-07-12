@@ -7,16 +7,19 @@ window.onload = function () {
     interval = setInterval(() => { updateTime() }, 1000)
 }
 
-function setLaunchTime() {
+//  setcountdown to end 1 hour from load time
+function setLaunchTime () {
     launchDatetime = new Date()
     launchDatetime.setTime(launchDatetime.getTime() + (1 * 60 * 60 * 1000))
 }
 
-function updateTime(isInit = false) {
+//  update countdown every second
+function updateTime (isInit = false) {
     let doClear = false
     let launch = new Date(launchDatetime)
     let now = new Date()
 
+    //  if countdown has not ended
     if (launch > now) {
         let diffInSeconds = Math.floor(Math.abs((now - launch) / 1000
         ))
@@ -49,24 +52,28 @@ function updateTime(isInit = false) {
         let timerCards = document.getElementsByClassName("timer__cards")[0]
         timerCards.classList.add("launched")
         let title = document.getElementsByClassName("title")[0]
-        title.textContent = "We're launched!"
+        title.textContent = "We're launched!"   //  display launched message
         setTimerAlert("We are launched!")
-        clearInterval(interval)
+        clearInterval(interval) //  stop countdown interval when ended
     }
 }
 
-function appendZero(value) {
+//  append zero digit if time value is one digit
+//  e.g. add 0 to 9 = 09
+function appendZero (value) {
     return (value < 10 ? "0" : "") + value
 }
 
-function createAnimatedFlip(flip) {
-    let animatedFlip = flip.cloneNode(true)
+//  add flip animation class
+function createAnimatedFlip (flip) {
+    let animatedFlip = flip.cloneNode(true) //  clone time value card (to be flipped)
     animatedFlip.classList.add("flip")
 
     return animatedFlip
 }
 
-function setCardContent(ind, newValue, type) {
+//  set current time on card
+function setCardContent (ind, newValue, type) {
     newValue = appendZero(newValue)
     let timerCard = document.getElementsByClassName("timer__card")[ind]
 
@@ -75,12 +82,18 @@ function setCardContent(ind, newValue, type) {
 
     let timePassed = Math.abs(parseInt(newValue) - parseInt(currentValue))
 
+    //  check if current time value is different from prev value
+    //  if different value, animate flip
+    //  e.g. flip if prev hour value is 09 and current hour value is 10
+    //  e.g. no flip if both prev hour value and current value is 09
     if (timePassed > 0) {
         let animatedFlip = createAnimatedFlip(timerCard.children[0])
         animatedFlip.addEventListener("animationend", () => {
             timerValues[1].textContent = newValue
-            timerCard.removeChild(animatedFlip)
+            timerCard.removeChild(animatedFlip) //  remove flipped/cloned card
 
+            //  accessible alert when day/hour/min value updates
+            //  no alert when every second updates
             if (type !== "second")
                 setTimerAlert(`${appendSToEnd(timePassed, type)} has passed!`)
         })
@@ -90,11 +103,13 @@ function setCardContent(ind, newValue, type) {
     }
 }
 
-function appendSToEnd(value, type) {
+//  append s to time value if plural
+function appendSToEnd (value, type) {
     return `${value} ${type}${value > 1 ? 's' : ''}`
 }
 
-function setTimerAlert(text) {
+//  accessible alert countdown updates
+function setTimerAlert (text) {
     let alert = document.getElementsByClassName("timer__alert")[0]
     alert.textContent = text
 }
